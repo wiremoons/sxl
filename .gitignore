@@ -1,0 +1,18 @@
+# pesky macOS files
+.DS_Store
+
+# directories to exclude form Git repo
+bin/
+Example_JSON/
+# ensure any binary file are not up loaded
+bin/*
+*.exe
+
+# any 'aspell' back up files are excluded
+*.bak
+
+# any 'debug.txt' file
+debug.txt
+
+# file containing api keys
+keys.txt
