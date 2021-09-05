@@ -35,10 +35,14 @@ jobs:
         echo "Installing Deno Ubuntu dependencies..."
         sudo apt -y install unzip git curl
         echo "Installing Deno runtime..."
+        echo "Creating '$HOME/.deno/bin' directory.."
         mkdir -p $HOME/.deno/bin
         cd $HOME/.deno/bin
-        curl https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip -o deno.zip
+        pwd
+        curl -L https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip -o deno.zip
+        ls -l
         unzip ./deno.zip
+        ls -l
         echo "Installed version of Deno is:"
         $HOME/.deno/bin/deno --version
         echo "Installation environment for Deno is:"
