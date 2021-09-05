@@ -98,7 +98,8 @@ deno compile --quiet --allow-net=api.spacexdata.com ./sxl.ts
 
 First ensure you have installed a copy of the `deno` or `deno.exe` program, and
 it is in your operating systems path. See the relevant
-[Deno install instruction]((https://deno.land/)) or just download the
+[Deno install instruction](https://github.com/denoland/deno_install) or just
+download the
 [Deno latest release version](https://github.com/denoland/deno/releases)
 directly.
 
