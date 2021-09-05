@@ -38,15 +38,20 @@ jobs:
         echo "Creating '$HOME/.deno/bin' directory.."
         mkdir -p $HOME/.deno/bin
         cd $HOME/.deno/bin
-        pwd
         curl -L https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip -o deno.zip
-        ls -l
         unzip ./deno.zip
+        echo ""
+        echo "Current directory and its contents are:"
+        pwd
         ls -l
+        echo ""
         echo "Installed version of Deno is:"
         $HOME/.deno/bin/deno --version
+        echo ""
         echo "Installation environment for Deno is:"
         $HOME/.deno/bin/deno info
+        echo ""
+        echo "DONE INSTALL."
 
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
@@ -55,11 +60,17 @@ jobs:
     - name: Run Deno application and any tests
       run: |
         echo "Run the Deno application"
-        pwd
-        ls
         PATH="${PATH}":$HOME/.deno/bin
         chmod 755 ./sxl.ts
+        echo ""
+        echo "Current directory and its contents are:"
+        pwd
+        ls -l
+        echo ""
+        echo "Execute program:"
+        echo ""
         ./sxl.ts
+        echo ""
         echo "DONE."
 
     # Saves built file as a release.
