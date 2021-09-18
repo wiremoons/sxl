@@ -49,7 +49,7 @@ interface Launch {
 //
 function setDisplayDate(launchData: Launch) {
   //console.log(`Epoch date for conversion: ${launchData.dateEpoch}`);
-  var dateUTC: Date;
+  let dateUTC: Date;
   if (launchData.dateEpoch) {
     dateUTC = new Date(launchData.dateEpoch * 1000);
     //console.log(`Converted date to UTC format: ${dateUTC}`);
