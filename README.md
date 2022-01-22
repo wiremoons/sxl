@@ -3,7 +3,7 @@
 
 # sxl (SpaceX Launch)
 
-Command line program called `sxl` to display the '_last_' and the '_next_'
+Command line program called `sxl` to display the '*last*' and the '*next*'
 scheduled SpaceX launches.
 
 ## Application Usage
@@ -63,7 +63,7 @@ GitHub repo with `git` as below:
 git clone https://github.com/wiremoons/sxl.git
 ```
 
-The program is the _TypeScript_ file named: `sxl.ts`. See below for options on
+The program is the *TypeScript* file named: `sxl.ts`. See below for options on
 how to run it.
 
 ## Running the program
@@ -74,7 +74,7 @@ program. See information below if needed on **Installing Deno**.
 Once the GitHub repo is cloned to you computer, ensure you are in its directory
 first.
 
-On operating systems such as _Linux_, _macOS_, and _WSL_ the program can be
+On operating systems such as *Linux*, *macOS*, and *WSL* the program can be
 executed as a script directly. Just ensure the `sxl.ts` is made executable (see
 `chmod` command below), and then run it directly with: `./sxl.ts`
 
@@ -82,13 +82,13 @@ executed as a script directly. Just ensure the `sxl.ts` is made executable (see
 chmod 755 sxl.ts
 ```
 
-The program can be run with _Deno_ using the command:
+The program can be run with *Deno* using the command:
 
 ```console
 deno run --quiet --allow-net=api.spacexdata.com ./sxl.ts
 ```
 
-The program can be compiled with _Deno_ using the command:
+The program can be compiled with *Deno* using the command:
 
 ```console
 deno compile --quiet --allow-net=api.spacexdata.com ./sxl.ts
@@ -100,7 +100,7 @@ First ensure you have installed a copy of the `deno` or `deno.exe` program, and
 it is in your operating systems path. See the relevant
 [Deno install instruction](https://github.com/denoland/deno_install) or just
 download the
-[Deno latest release version](https://github.com/denoland/deno/releases)
+[Deno release version](https://github.com/denoland/deno/releases)
 directly.
 
 Install is easy as it is just a single binary executable file - just download a
@@ -114,9 +114,9 @@ the API and the data it provides available for use!
 
 ## Licenses
 
-The `sxl` application is provided under the _MIT open source license_. A copy of
+The `sxl` application is provided under the *MIT open source license*. A copy of
 the MIT license file is [here](./LICENSE).
 
 The [SpaceX REST API](https://github.com/r-spacex/SpaceX-API) is provided under
-the _Apache License Version 2.0_ open source license. A copy of the license file
+the _Apache Licence Version 2.0_ open source licence. A copy of the licence file
 is [here](https://github.com/r-spacex/SpaceX-API/blob/master/LICENSE).
