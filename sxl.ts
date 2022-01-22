@@ -8,7 +8,7 @@
  * @source     https://github.com/wiremoons/sxl
  *
  * @date originally created: 18 May 2021
- * @date updated significantly: 05 Sep 2021
+ * @date updated significantly: 05 Sep 2021 and 22 Jan 2022
  *
  * @details Program obtains the 'latest' and 'next' SpaceX launches using the API from: https://github.com/r-spacex/SpaceX-API
  *
@@ -23,7 +23,7 @@
 // MODULE IMPORTS
 //--------------------------------
 
-import { toIMF } from "https://deno.land/std@0.106.0/datetime/mod.ts";
+import { toIMF } from "https://deno.land/std@0.122.0/datetime/mod.ts";
 
 //--------------------------------
 // INTERFACES
@@ -66,7 +66,7 @@ function setDisplayDate(launchData: Launch) {
 //--------------------------------
 
 /** Download launch data and extract into a 'Launch' record.
- * @param url : the url for either 'last' or 'next' launch data to `fetch`
+ * @param url for either 'last' or 'next' launch data to `fetch`
  * @returns Promise<Launch> : populated `Launch` interface object using fetched data.
  * @note Next scheduled launch URL:
  * @code https://api.spacexdata.com/v4/launches/next
