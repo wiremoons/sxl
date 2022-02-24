@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --quiet --allow-net=api.spacexdata.com
+#!/usr/bin/env -S deno run --quiet --allow-net=api.spacexdata.com --allow-read=.
 /**
  * @file sxl.ts
  * @brief Obtain the 'latest' and 'next' SpaceX launches.
@@ -23,7 +23,10 @@
 // MODULE IMPORTS
 //--------------------------------
 
-import { toIMF } from "https://deno.land/std@0.122.0/datetime/mod.ts";
+import { toIMF } from "https://deno.land/std@0.127.0/datetime/mod.ts";
+import {parse} from "https://deno.land/std@0.127.0/flags/mod.ts";
+import {cliVersion} from "https://deno.land/x/deno_mod@0.7.4/cli_version.ts";
+import {basename} from "https://deno.land/std@0.127.0/path/mod.ts";
 
 //--------------------------------
 // INTERFACES
@@ -60,6 +63,88 @@ function setDisplayDate(launchData: Launch) {
     launchData.displayDate = "UNKNOWN";
   }
 }
+
+/** Return the name of the currently running program without the path included. */
+function getAppName(): string {
+  return `${basename(Deno.mainModule) ?? "UNKNOWN"}`;
+}
+
+//--------------------------------
+// COMMAND LINE ARGS FUNCTIONS
+//--------------------------------
+
+/** Define the command line argument switches and options to be used */
+const cliOpts = {
+  default: { l: false, h: false, n:false, v: false },
+  alias: { l: "last", h: "help", n: "next", v: "version" },
+  stopEarly: true,
+  unknown: showUnknown,
+};
+
+/** define options for `cliVersion()` function for application version data */
+const versionOptions = {
+  version: "0.2.0",
+  copyrightName: "Simon Rowe",
+  licenseUrl: "https://github.com/wiremoons/sxl/",
+  crYear: "2022",
+};
+
+/** obtain any command line arguments and exec them as needed */
+async function getCliArgs() {
+  //console.log(parse(Deno.args,cliOpts));
+  const cliArgs = parse(Deno.args, cliOpts);
+
+  if (cliArgs.latest) {
+    //
+    console.log("TODO: execute and show 'last' launch only.")
+    Deno.exit(0);
+  }
+
+  if (cliArgs.next) {
+    //
+    console.log("TODO: execute and show 'next' launch only.")
+    Deno.exit(0);
+  }
+
+  if (cliArgs.help) {
+    showHelp();
+    Deno.exit(0);
+  }
+
+  if (cliArgs.version) {
+    const versionData = await cliVersion(versionOptions);
+    console.log(versionData);
+    Deno.exit(0);
+  }
+}
+
+/** Function defined in `cliOpts` so is run automatically by `parse()` if an unknown
+ * command line option is given by the user.
+ * @code showUnknown(arg: string, k?: string, v?: unknown)
+ */
+function showUnknown(arg: string) {
+  console.error(`\nERROR: Unknown argument: '${arg}'`);
+  showHelp();
+  Deno.exit(1);
+}
+
+/** Help display for application called when unknown command lines options are entered */
+function showHelp() {
+  console.log(`
+  
+${getAppName()} obtains the 'latest' and 'next' SpaceX launches using the API 
+from: https://github.com/r-spacex/SpaceX-API
+
+Usage: ${getAppName()} [switches] [arguments]
+
+[Switches]       [Arguments]   [Default Value]   [Description]
+-l, --last                          false        only display data for the last launch               
+-h, --help                          false        display help information
+-n, --next                          false        only display data for the next launch  
+-v, --version                       false        display program version
+`);
+}
+
 
 //--------------------------------
 // APPLICATION FUNCTIONS
@@ -166,7 +251,11 @@ ${launchData.payloadData || "Unknown"}
 // MAIN
 //--------------------------------
 if (import.meta.main) {
+
+  if (Deno.args.length > 0) await getCliArgs();
+
   //TODO: run both request at same time instead of sequentially
+  //TODO: link separate requests to command line options 'last' and 'next'
   console.log("");
   console.log("SpaceX  -  Rocket  Launch  Information");
   console.log("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
@@ -176,7 +265,7 @@ if (import.meta.main) {
   const latestLaunch: Launch = await getLaunchData(
     "https://api.spacexdata.com/v4/launches/latest",
   );
-  // display 'next' lauch information
+  // display 'next' launch information
   setDisplayDate(latestLaunch);
   latestLaunch.payloadData = await getPayloadData(
     `https://api.spacexdata.com/v4/payloads/${latestLaunch.payloads}`,
@@ -188,7 +277,7 @@ if (import.meta.main) {
   const nextLaunch: Launch = await getLaunchData(
     "https://api.spacexdata.com/v4/launches/next",
   );
-  // display 'next' lauch information
+  // display 'next' launch information
   setDisplayDate(nextLaunch);
   nextLaunch.payloadData = await getPayloadData(
     `https://api.spacexdata.com/v4/payloads/${nextLaunch.payloads}`,
