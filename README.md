@@ -13,35 +13,37 @@ Under development - but functioning correctly and usable.
 Output of the program when run is:
 
 ```console
-SpaceX  -  Rocket  Launch  Information
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+SpaceX - Rocket Launch Information
 
 Latest SpaceX Launch 🚀
 
-Flight Number     : 133
-Flight Name       : CRS-23
-Planned Date      : Sun, 29 Aug 2021 07:14:00 GMT
-Flight Successful : true
-
-Flight Details:
-SpaceX's 23rd ISS resupply mission on behalf of NASA, this mission brings essential supplies to the International Space Station using the cargo variant of SpaceX's Dragon 2 spacecraft. Cargo includes several science experiments. The booster for this mission is expected to land on an ASDS. The mission will be complete with return and recovery of the Dragon capsule and down cargo.
+Flight Number     : 151
+Flight Name       : Starlink 4-11 (v1.5)
+Launchpad         : Vandenberg Space Force Base Space Launch Complex 4E California. Launched 21 of 21 attempts.
+Launch Date       : Fri, 25 Feb 2022 17:12:00 GMT 
+Flight Successful : true 
 
 Payload Details:
-Payload is: CRS-23 (Dragon 2.0) for customer: NASA (CRS). Payload manufactured by: SpaceX.
+Payload is: Starlink 4-11 (v1.5) (Satellite) for customer: SpaceX. Payload manufactured by: SpaceX.
+
+Flight Details:
+None available
+
 
 
 Next Scheduled SpaceX Launch 🚀
 
-Flight Number     : 134
-Flight Name       : Inspiration4
-Planned Date      : Wed, 15 Sep 2021 00:00:00 GMT
-Flight Successful : Not Applicable
-
-Flight Details:
-Inspiration4 is the world’s first all-civilian mission to space. The mission will be commanded by Jared Isaacman, the 37-year-old founder and Chief Executive Officer of Shift4 Payments and an accomplished pilot and adventurer. Inspiration4 will leave Earth from Kennedy Space Center’s historic Launch Complex 39A, the embarkation point for Apollo and Space Shuttle missions, and travel across a low earth orbit on a multi-day journey that will continually eclipse more than 90% of the earth’s population. Named in recognition of the four-person crew that will raise awareness and funds for St. Jude Children’s Research Hospital, this milestone represents a new era for human spaceflight and exploration.
+Flight Number     : 152
+Flight Name       : Starlink 4-9 (v1.5)
+Launchpad         : Kennedy Space Center Historic Launch Complex 39A Florida. Launched 44 of 44 attempts.
+Launch Date       : Thu, 03 Mar 2022 14:32:00 GMT [Precision: HOUR]
+Flight Successful : Awaiting launch 
 
 Payload Details:
-Payload is: Inspiration4 (Crew Dragon) for customer: Jared Isaacman. Payload manufactured by: SpaceX.
+Payload is: Starlink 4-9 (v1.5) (Satellite) for customer: SpaceX. Payload manufactured by: SpaceX.
+
+Flight Details:
+None available
 ```
 
 ## Development Information
@@ -85,13 +87,13 @@ chmod 755 sxl.ts
 The program can be run with *Deno* using the command:
 
 ```console
-deno run --quiet --allow-net=api.spacexdata.com ./sxl.ts
+deno run --quiet --allow-read --allow-net=api.spacexdata.com ./sxl.ts
 ```
 
 The program can be compiled with *Deno* using the command:
 
 ```console
-deno compile --quiet --allow-net=api.spacexdata.com ./sxl.ts
+deno compile --quiet --allow-read --allow-net=api.spacexdata.com ./sxl.ts
 ```
 
 ### Installing Deno
