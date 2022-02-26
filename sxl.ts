@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --quiet --allow-net=api.spacexdata.com --allow-read=.
+#!/usr/bin/env -S deno run --quiet --allow-net=api.spacexdata.com --allow-read
 /**
  * @file sxl.ts
  * @brief Obtain the 'latest' and 'next' SpaceX launches.
@@ -13,20 +13,21 @@
  * @details Program obtains the 'latest' and 'next' SpaceX launches using the API from: https://github.com/r-spacex/SpaceX-API
  *
  * @note The program can be run with Deno using the command:
- * @code deno run --quiet --allow-net=api.spacexdata.com ./sxl.ts
+ * @code deno run --quiet --allow-read --allow-net=api.spacexdata.com ./sxl.ts
  *
  * @note The program can be compiled with Deno using the command:
- * @code deno compile --quiet --allow-net=api.spacexdata.com ./sxl.ts
+ * @code deno compile --quiet --allow-read --allow-net=api.spacexdata.com ./sxl.ts
  */
 
 //--------------------------------
 // MODULE IMPORTS
 //--------------------------------
 
-import { toIMF } from "https://deno.land/std@0.127.0/datetime/mod.ts";
+import {toIMF} from "https://deno.land/std@0.127.0/datetime/mod.ts";
 import {parse} from "https://deno.land/std@0.127.0/flags/mod.ts";
-import {cliVersion} from "https://deno.land/x/deno_mod@0.7.4/cli_version.ts";
+import {cliVersion} from "https://deno.land/x/deno_mod@0.7.5/cli_version.ts";
 import {basename} from "https://deno.land/std@0.127.0/path/mod.ts";
+import { underline,blue,green } from "https://deno.land/std@0.127.0/fmt/colors.ts";
 
 //--------------------------------
 // INTERFACES
@@ -39,7 +40,9 @@ interface Launch {
   payloads: number;
   launchpad: number;
   success: boolean;
+  date_precision: string;
   payloadData?: string;
+  launchPadData?: string;
   displayDate?: string;
 }
 
@@ -83,7 +86,7 @@ const cliOpts = {
 
 /** define options for `cliVersion()` function for application version data */
 const versionOptions = {
-  version: "0.2.0",
+  version: "0.3.0",
   copyrightName: "Simon Rowe",
   licenseUrl: "https://github.com/wiremoons/sxl/",
   crYear: "2022",
@@ -175,7 +178,7 @@ async function getLaunchData(url: string): Promise<Launch> {
   const launchJSON = await response.json();
 
   // extract JSON record into `Launch` interface
-  const flightData: Launch = {
+  return {
     flightNumber: launchJSON["flight_number"],
     flightName: launchJSON["name"],
     details: launchJSON["details"],
@@ -183,12 +186,12 @@ async function getLaunchData(url: string): Promise<Launch> {
     payloads: launchJSON["payloads"],
     launchpad: launchJSON["launchpad"],
     success: launchJSON["success"],
+    date_precision: launchJSON["date_precision"],
   };
 
   // debug output
   //console.info(JSON.stringify(flightData));
 
-  return flightData;
 }
 
 /** Obtain payload data and extract into a 'Payload' string
@@ -209,41 +212,73 @@ async function getPayloadData(url: string): Promise<string> {
       `Sever response: '${response.statusText}' (Code: '${response.status}')`,
     );
     console.error("Exit.");
-    Deno.exit;
+    Deno.exit(3);
   }
 
   const payloadJSON = await response.json();
 
-  // extract record
-  // TODO: return 'UNKNOWN' if any JSON data fields are empty
-  const payloadData = `Payload is: ${payloadJSON["name"]} (${
-    payloadJSON["type"]
-  }) for customer: ${payloadJSON["customers"]}. Payload manufactured by: ${
-    payloadJSON["manufacturers"]
-  }.`;
+  return `Payload is: ${payloadJSON["name"] || "UNKNOWN name"} (${
+    payloadJSON["type"] || "UNKNOWN type"
+  }) for customer: ${payloadJSON["customers"] || "UNKNOWN customer"}. Payload manufactured by: ${
+    payloadJSON["manufacturers"] || "UNKNOWN manufacture"}.`;
+
+}
+
+
+/** Obtain launchpad data and extract into a 'launchPadData' string
+ * @note LaunchPad data URL:
+ * @code https://api.spacexdata.com/v4/launchpads/:id
+ * @code https://api.spacexdata.com/v4/launchpads/5e9e4502f509092b78566f87
+ */
+
+async function getLaunchPadData(url: string): Promise<string> {
+  // TODO: move `fetch` to own function as used multiple time in other functions
+  const response = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    console.error("\nERROR: unable to obtain website launchpad data");
+    console.error(
+        `Sever response: '${response.statusText}' (Code: '${response.status}')`,
+    );
+    console.error("Exit.");
+    Deno.exit(2);
+  }
+
+  const launchpadJSON = await response.json();
+
+  return `${launchpadJSON["full_name"] || "UNKNOWN name"} ${launchpadJSON["region"] || "UNKNOWN region"}. Launched ${launchpadJSON["launch_successes"] || "UNKNOWN"} of ${
+      launchpadJSON["launch_attempts"] || "UNKNOWN"} attempts.`;
 
   // debug output
-  //console.info(JSON.stringify(payloadData));
-  //console.info(JSON.stringify(payloadJSON));
+  //console.info(JSON.stringify(launchpadData));
+  //console.info(JSON.stringify(launchpadJSON));
 
-  return payloadData;
 }
+
+
 
 /** Output the obtained flight records information */
 function displayFlightRecord(launchData: Launch, launchTitle: string) {
+  const launchPrecision = (launchTitle.includes("Next")) ? `[Precision: ${launchData.date_precision.toUpperCase()}]` : ""
+  const LaunchKind = (launchTitle.includes("Next")) ? `${blue(launchTitle)}` : `${green(launchTitle)}`
+  // Output final launch information to the screen
   console.log(`
-${launchTitle} SpaceX Launch 🚀
+${LaunchKind} SpaceX Launch 🚀
 
 Flight Number     : ${launchData.flightNumber}
 Flight Name       : ${launchData.flightName}
-Planned Date      : ${launchData.displayDate}
-Flight Successful : ${launchData.success || "Not Applicable"}
+Launchpad         : ${launchData.launchPadData}
+Launch Date       : ${launchData.displayDate} ${launchPrecision}
+Flight Successful : ${launchData.success || "Awaiting launch"} 
+
+Payload Details:
+${launchData.payloadData || "Unknown"}
 
 Flight Details:
 ${launchData.details || "None available"}
 
-Payload Details:
-${launchData.payloadData || "Unknown"}
 `);
 }
 
@@ -257,8 +292,7 @@ if (import.meta.main) {
   //TODO: run both request at same time instead of sequentially
   //TODO: link separate requests to command line options 'last' and 'next'
   console.log("");
-  console.log("SpaceX  -  Rocket  Launch  Information");
-  console.log("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+  console.log(`${underline("SpaceX - Rocket Launch Information")}`);
 
   // LAST LAUNCH
   // get the 'last' launch
@@ -269,6 +303,9 @@ if (import.meta.main) {
   setDisplayDate(latestLaunch);
   latestLaunch.payloadData = await getPayloadData(
     `https://api.spacexdata.com/v4/payloads/${latestLaunch.payloads}`,
+  );
+  latestLaunch.launchPadData = await getLaunchPadData(
+      `https://api.spacexdata.com/v4/launchpads/${latestLaunch.launchpad}`,
   );
   displayFlightRecord(latestLaunch, "Latest");
 
@@ -281,6 +318,9 @@ if (import.meta.main) {
   setDisplayDate(nextLaunch);
   nextLaunch.payloadData = await getPayloadData(
     `https://api.spacexdata.com/v4/payloads/${nextLaunch.payloads}`,
+  );
+  nextLaunch.launchPadData = await getLaunchPadData(
+      `https://api.spacexdata.com/v4/launchpads/${nextLaunch.launchpad}`,
   );
   displayFlightRecord(nextLaunch, "Next Scheduled");
 }
