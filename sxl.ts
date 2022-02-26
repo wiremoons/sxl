@@ -86,7 +86,7 @@ const cliOpts = {
 
 /** define options for `cliVersion()` function for application version data */
 const versionOptions = {
-  version: "0.3.0",
+  version: "0.3.1",
   copyrightName: "Simon Rowe",
   licenseUrl: "https://github.com/wiremoons/sxl/",
   crYear: "2022",
@@ -171,8 +171,7 @@ async function getLaunchData(url: string): Promise<Launch> {
       `Sever response: '${response.statusText}' (Code: '${response.status}')`,
     );
     // TODO: return empty `Launch` here instead of exiting so Promise is met.
-    console.error("Exit.");
-    Deno.exit(1);
+    return Promise.reject(new Error("Unable to retrieve website data."));
   }
 
   const launchJSON = await response.json();
@@ -211,8 +210,7 @@ async function getPayloadData(url: string): Promise<string> {
     console.error(
       `Sever response: '${response.statusText}' (Code: '${response.status}')`,
     );
-    console.error("Exit.");
-    Deno.exit(3);
+    return Promise.reject(new Error("Unable to retrieve website payload data."));
   }
 
   const payloadJSON = await response.json();
@@ -242,8 +240,7 @@ async function getLaunchPadData(url: string): Promise<string> {
     console.error(
         `Sever response: '${response.statusText}' (Code: '${response.status}')`,
     );
-    console.error("Exit.");
-    Deno.exit(2);
+    return Promise.reject(new Error("Unable to retrieve website launchpad data."));
   }
 
   const launchpadJSON = await response.json();
